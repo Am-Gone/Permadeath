@@ -1,0 +1,7 @@
+name: Permadeath
+version: 1.0
+authors:
+  - AmGone
+  - Shepiock
+api-version: 1.19
+main: fr.amgone.permadeath.Main
