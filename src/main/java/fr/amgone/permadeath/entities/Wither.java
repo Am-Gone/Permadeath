@@ -6,6 +6,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -50,6 +52,8 @@ public class Wither extends WitherBoss {
             Location witherLocation = new Location(serverLevel.getWorld(), getX(), getY(), getZ());
             serverLevel.getWorld().strikeLightning(witherLocation);
             serverLevel.getWorld().createExplosion(getBukkitCreature(), witherLocation, 3, false, true);
+            serverLevel.getWorld().spawnParticle(Particle.SMOKE_LARGE, witherLocation, 100, 1, 2, 1, 1);
+            serverLevel.getWorld().spawnParticle(Particle.SOUL, witherLocation, 100, 3, 3, 3, 1);
         }
 
         if(stunWait > 0) {
@@ -62,11 +66,17 @@ public class Wither extends WitherBoss {
             for(Entity entities : getBukkitEntity().getNearbyEntities(7, 7, 7)) {
                 if(entities instanceof Player player) {
                     player.getWorld().strikeLightning(player.getLocation());
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 5 * 20, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 5 * 20, 3));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 5 * 20, 2));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 0));
                     player.damage(4, getBukkitMonster());
-                    // TODO play anvil sound
+
+                    player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 1, 0);
+                    player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2, 0.7F);
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0.7F);
+
+                    player.spawnParticle(Particle.SMOKE_LARGE, player.getLocation(), 200, 0, 1, 0, 1);
+                    player.spawnParticle(Particle.ASH, player.getLocation(), 100, 2, 2, 2, 0);
                 }
             }
         }

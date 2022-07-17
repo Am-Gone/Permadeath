@@ -5,11 +5,14 @@ import fr.amgone.permadeath.utils.DaysListener;
 import fr.amgone.permadeath.utils.GameFileConfig;
 import fr.amgone.permadeath.utils.ItemsList;
 import fr.amgone.permadeath.utils.Utils;
+import net.minecraft.stats.RecipeBook;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
@@ -47,6 +50,38 @@ public class Main extends JavaPlugin {
             netheriteIngotRecipe.setIngredient('S', ItemsList.DIAMONED_NETHER_STAR);
             netheriteIngotRecipe.setIngredient('P', ItemsList.PERFECT_GOLD_NUGGET);
             Bukkit.addRecipe(netheriteIngotRecipe);
+
+        } else if(Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(14)) {
+
+            ShapedRecipe reviveStoneRecipe = new ShapedRecipe(new NamespacedKey("permadeath", "revive_stone"),
+                    ItemsList.REVIVE_STONE);
+            reviveStoneRecipe.shape("CRC", "RTR", "CRC");
+            reviveStoneRecipe.setIngredient('T', Material.TOTEM_OF_UNDYING);
+            reviveStoneRecipe.setIngredient('R', ItemsList.RAVAGER_BONE);
+            reviveStoneRecipe.setIngredient('C', ItemsList.CRYING_GHAST_TEAR);
+            Bukkit.addRecipe(reviveStoneRecipe);
+
+        } else if(Utils.hasDaysPassed(14) && !Utils.hasDaysPassed(21)) {
+
+            ShapedRecipe reviveCoreRecipe = new ShapedRecipe(new NamespacedKey("permadeath", "revive_core"),
+                    ItemsList.REVIVE_CORE);
+            reviveCoreRecipe.shape("DSD", "SWS", "DSD");
+            reviveCoreRecipe.setIngredient('D', Material.DIAMOND);
+            reviveCoreRecipe.setIngredient('S', Material.SHULKER_SHELL);
+            reviveCoreRecipe.setIngredient('W', ItemsList.WARDEN_HEART);
+            Bukkit.addRecipe(reviveCoreRecipe);
+
+        } else if(Utils.hasDaysPassed(21)) {
+
+            ShapedRecipe emperorReviveStoneRecipe = new ShapedRecipe(new NamespacedKey("permadeath", "emperor_revive_stone"),
+                    ItemsList.EMPEROR_STONE);
+            emperorReviveStoneRecipe.shape("NEN", "PGP", "NEN");
+            emperorReviveStoneRecipe.setIngredient('N', ItemsList.DIAMONED_NETHER_STAR);
+            emperorReviveStoneRecipe.setIngredient('E', ItemsList.EMPEROR_CRYSTAL);
+            emperorReviveStoneRecipe.setIngredient('P', ItemsList.POWER_TOTEM);
+            emperorReviveStoneRecipe.setIngredient('G', Material.NETHERITE_INGOT);
+            Bukkit.addRecipe(emperorReviveStoneRecipe);
+
         }
 
         new DaysListener().runTaskTimer(this, 0, 20);
