@@ -638,14 +638,14 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if(event.getEntity().getKiller() != null) {
-            if(event.getEntity().getKiller().equals(EntityType.IRON_GOLEM)) {
+            if(event.getEntity().getKiller().getType() == EntityType.IRON_GOLEM) {
                 event.getDrops().clear();
                 event.setDroppedExp(0);
             }
         }
 
         if(event.getEntity().getKiller() != null && event.getEntity() instanceof EnderCrystal) {
-            if(event.getEntity().getKiller().equals(EntityType.GHAST)) {
+            if(event.getEntity().getKiller().getType() == EntityType.GHAST) {
                 event.setCancelled(true);
             }
         }
