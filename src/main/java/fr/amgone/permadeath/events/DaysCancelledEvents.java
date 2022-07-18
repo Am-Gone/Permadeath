@@ -4,14 +4,9 @@ import fr.amgone.permadeath.Main;
 import fr.amgone.permadeath.utils.ItemsList;
 import fr.amgone.permadeath.utils.Utils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.DoubleBlockCombiner;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -30,14 +25,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DaysCancelledEvents implements Listener {
     @EventHandler
     public void onEndPortalEnter(PlayerTeleportEvent event) {
-        if (!Utils.hasDaysPassed(14) && event.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL) {
+        if (!Utils.hasDaysPassed(10) && event.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL) {
             event.setCancelled(true);
         }
     }
@@ -60,9 +54,9 @@ public class DaysCancelledEvents implements Listener {
     public void onEntitySpawn(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
 
-        if (entity instanceof Fireball && Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(28)) {
+        if (entity instanceof Fireball && Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(20)) {
             ((Fireball) entity).setYield(5.0F);
-        } else if (entity instanceof Fireball && Utils.hasDaysPassed(28)) {
+        } else if (entity instanceof Fireball && Utils.hasDaysPassed(20)) {
             ((Fireball) entity).setYield(6.0F);
         }
     }
@@ -75,8 +69,8 @@ public class DaysCancelledEvents implements Listener {
             mob.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(mob.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).getValue() * 2);
         }
 
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.RAID && !Utils.hasDaysPassed(7)) {
-            if (livingEntity instanceof Ravager || livingEntity instanceof Pillager || livingEntity instanceof Vindicator || livingEntity instanceof Vex) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.RAID && !Utils.hasDaysPassed(5)) {
+            if (livingEntity instanceof Ravager || livingEntity instanceof Pillager || livingEntity instanceof Vindicator || livingEntity instanceof Vex || livingEntity instanceof Evoker) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 0, false, false));
@@ -84,8 +78,8 @@ public class DaysCancelledEvents implements Listener {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 1, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
             }
-        } else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.RAID && Utils.hasDaysPassed(7)) {
-            if (livingEntity instanceof Ravager || livingEntity instanceof Pillager || livingEntity instanceof Vindicator || livingEntity instanceof Vex) {
+        } else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.RAID && Utils.hasDaysPassed(5)) {
+            if (livingEntity instanceof Ravager || livingEntity instanceof Pillager || livingEntity instanceof Vindicator || livingEntity instanceof Vex || livingEntity instanceof Evoker) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 1, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 1, false, false));
@@ -94,7 +88,7 @@ public class DaysCancelledEvents implements Listener {
 
 
 
-        if (livingEntity instanceof Witch && !Utils.hasDaysPassed(28)) {
+        if (livingEntity instanceof Witch && !Utils.hasDaysPassed(20)) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -105,7 +99,7 @@ public class DaysCancelledEvents implements Listener {
                             monster.getWorld().playSound(monster.getLocation(), Sound.BLOCK_BEACON_AMBIENT, 0.7F, 1);
                         }
 
-                        if (entities instanceof Player player && Utils.hasDaysPassed(21) && entities.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        if (entities instanceof Player player && Utils.hasDaysPassed(15) && entities.getWorld().getEnvironment() == World.Environment.THE_END) {
                             player.spawnParticle(Particle.CRIT_MAGIC, player.getLocation(), 30, 1.2, 1.5, 1.2, 0.25);
                             player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_HURT, 1.6F, 0);
 
@@ -118,10 +112,10 @@ public class DaysCancelledEvents implements Listener {
                 }
             }.runTaskTimer(Main.PLUGIN, 0, 20); //TODO L'effet de zone des withes ne disparait pas quand la witch est tuée
 
-            if (Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(21)) {
+            if (Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(15)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 2, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 1, false, false));
-            } else if (Utils.hasDaysPassed(21)) {
+            } else if (Utils.hasDaysPassed(15)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 3, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 1, false, false));
             }
@@ -130,7 +124,7 @@ public class DaysCancelledEvents implements Listener {
 
 
         if (livingEntity instanceof Hoglin || livingEntity instanceof Piglin) {
-            if (!Utils.hasDaysPassed(14)) {
+            if (!Utils.hasDaysPassed(10)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 0, false, false));
@@ -142,7 +136,7 @@ public class DaysCancelledEvents implements Listener {
 
         }
 
-        if (livingEntity instanceof MagmaCube && Utils.hasDaysPassed(14)) {
+        if (livingEntity instanceof MagmaCube && Utils.hasDaysPassed(10)) {
             if (livingEntity.customName() == null) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) <= 2) {
                     MagmaCube gigaMagmaCube = (MagmaCube) livingEntity.getWorld().spawnEntity(livingEntity.getLocation(), EntityType.MAGMA_CUBE);
@@ -166,18 +160,18 @@ public class DaysCancelledEvents implements Listener {
             }
         }
 
-        if (livingEntity instanceof Phantom && Utils.hasDaysPassed(14)) {
+        if (livingEntity instanceof Phantom && Utils.hasDaysPassed(10)) {
             ((Phantom) livingEntity).setSize(2);
         }
 
-        if (livingEntity instanceof Zombie && Utils.hasDaysPassed(14) && !Utils.hasDaysPassed(21)) {
+        if (livingEntity instanceof Zombie && Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(15)) {
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 1, false, false));
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 1, false, false));
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 1, false, false));
 
             livingEntity.getEquipment().setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
 
-        } else if (livingEntity instanceof Zombie && Utils.hasDaysPassed(21)) {
+        } else if (livingEntity instanceof Zombie && Utils.hasDaysPassed(15)) {
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 1, false, false));
             livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 2, false, false));
@@ -190,20 +184,20 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if (livingEntity instanceof Creeper) {
-            if (Utils.hasDaysPassed(14)) {
+            if (Utils.hasDaysPassed(5)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
 
-                if (Utils.hasDaysPassed(21)) {
+                if (Utils.hasDaysPassed(15)) {
                     ((Creeper) livingEntity).setPowered(true);
                 }
             }
         }
 
         if (livingEntity instanceof PigZombie) {
-            if (Utils.hasDaysPassed(7)) {
+            if (Utils.hasDaysPassed(5)) {
                 ((PigZombie) livingEntity).setAngry(true);
-                if (Utils.hasDaysPassed(21)) {
+                if (Utils.hasDaysPassed(15)) {
                     livingEntity.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
                     livingEntity.getEquipment().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
                     livingEntity.getEquipment().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
@@ -216,18 +210,18 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if (livingEntity instanceof Warden) {
-            if (Utils.hasDaysPassed(14)) {
+            if (Utils.hasDaysPassed(10)) {
                 livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(200 * 2);
                 livingEntity.setHealth(livingEntity.getMaxHealth());
             }
         } //TODO Show warden bossbar to nearby players
 
         if (livingEntity instanceof Skeleton) {
-            if (Utils.hasDaysPassed(14) && !Utils.hasDaysPassed(21)) {
+            if (Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(15)) {
                 livingEntity.getEquipment().setItemInMainHand(ItemsList.POWER_4_BOW);
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
-            } else if (Utils.hasDaysPassed(21)) {
+            } else if (Utils.hasDaysPassed(15)) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) <= 50) {
                     livingEntity.getEquipment().setItemInMainHand(ItemsList.ARCHER_SKELETON_BOW);
 
@@ -257,7 +251,7 @@ public class DaysCancelledEvents implements Listener {
 
         }
 
-        if (livingEntity instanceof WitherSkeleton && Utils.hasDaysPassed(21)) {
+        if (livingEntity instanceof WitherSkeleton && Utils.hasDaysPassed(15)) {
 
             int randomClass = ThreadLocalRandom.current().nextInt(0, 50);
 
@@ -318,10 +312,10 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if (livingEntity instanceof Ghast) {
-            if (Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(28)) {
+            if (Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(20)) {
                 livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30 * 2);
                 livingEntity.setHealth(livingEntity.getMaxHealth());
-            } else if (Utils.hasDaysPassed(28)) {
+            } else if (Utils.hasDaysPassed(20)) {
                 livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50 * 2);
                 livingEntity.setHealth(livingEntity.getMaxHealth());
             }
@@ -370,7 +364,7 @@ public class DaysCancelledEvents implements Listener {
                 }
 
             }
-            if (Utils.hasDaysPassed(28) && ThreadLocalRandom.current().nextInt(0, 14) == 1 && livingEntity.getWorld().getEnvironment() == World.Environment.THE_END) {
+            if (Utils.hasDaysPassed(20) && ThreadLocalRandom.current().nextInt(0, 14) == 1 && livingEntity.getWorld().getEnvironment() == World.Environment.THE_END) {
                 IronGolem amethystGolem = (IronGolem) livingEntity.getWorld().spawnEntity(livingEntity.getLocation(), EntityType.IRON_GOLEM);
                 livingEntity.remove();
 
@@ -401,7 +395,7 @@ public class DaysCancelledEvents implements Listener {
                 enderVindicator.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 0, false, false));
                 enderVindicator.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
 
-                if (!Utils.hasDaysPassed(28)) {
+                if (!Utils.hasDaysPassed(20)) {
                     ItemStack ironAxe = new ItemStack(Material.IRON_AXE);
                     ItemMeta ironAxeMeta = ironAxe.getItemMeta();
                     ironAxeMeta.addEnchant(Enchantment.DAMAGE_ALL, 6, true);
@@ -418,7 +412,7 @@ public class DaysCancelledEvents implements Listener {
                 }
             }
 
-            if (Utils.hasDaysPassed(21) && !Utils.hasDaysPassed(28)) {
+            if (Utils.hasDaysPassed(15) && !Utils.hasDaysPassed(20)) {
                 if (ThreadLocalRandom.current().nextInt(0, 12) == 1 && livingEntity.getWorld().getEnvironment() == World.Environment.THE_END) {
                     Witch enderWitch = (Witch) livingEntity.getWorld().spawnEntity(livingEntity.getLocation(), EntityType.WITCH);
                     livingEntity.remove();
@@ -429,10 +423,10 @@ public class DaysCancelledEvents implements Listener {
                 }
             }
 
-            if (Utils.hasDaysPassed(14) && !Utils.hasDaysPassed(28)) {
+            if (Utils.hasDaysPassed(10) && !Utils.hasDaysPassed(20)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 1, false, false));
-            } else if (Utils.hasDaysPassed(28)) {
+            } else if (Utils.hasDaysPassed(20)) {
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 1, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                 livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 2, false, false));
@@ -443,11 +437,11 @@ public class DaysCancelledEvents implements Listener {
             if (ironGolem.customName().equals(Component.text("Amethyst Golem").color(TextColor.color(NamedTextColor.LIGHT_PURPLE)))) {
                 ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 6000000, 0, false, false));
 
-                if (!Utils.hasDaysPassed(7)) {
+                if (!Utils.hasDaysPassed(5)) {
                     ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 0, false, false));
                     ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 6000000, 0, false, false));
                 } else {
-                    if(Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(28)) {
+                    if(Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(20)) {
                         ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 6000000, 2, false, false));
                         ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 6000000, 0, false, false));
                         ironGolem.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 6000000, 0, false, false));
@@ -484,7 +478,7 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if (livingEntity instanceof EnderDragon) {
-            if (!Utils.hasDaysPassed(28)) {
+            if (!Utils.hasDaysPassed(20)) {
                 livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(250 * 2);
             } else {
                 livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(500 * 2);
@@ -531,7 +525,7 @@ public class DaysCancelledEvents implements Listener {
         }
 
         if (event.getBlock().getType() == Material.SCULK || event.getBlock().getType() == Material.SCULK_CATALYST) {
-            if (Utils.hasDaysPassed(14)) {
+            if (Utils.hasDaysPassed(10)) {
                 event.setDropItems(false);
                 event.setExpToDrop(0);
             }
@@ -555,7 +549,7 @@ public class DaysCancelledEvents implements Listener {
         if (event.getRecipe() == null) return;
 
         Material recipeResult = event.getRecipe().getResult().getType();
-        if (!Utils.hasDaysPassed(7) && recipeResult == Material.NETHERITE_HELMET || recipeResult == Material.NETHERITE_CHESTPLATE
+        if (!Utils.hasDaysPassed(5) && recipeResult == Material.NETHERITE_HELMET || recipeResult == Material.NETHERITE_CHESTPLATE
                 || recipeResult == Material.NETHERITE_LEGGINGS || recipeResult == Material.NETHERITE_BOOTS) {
             event.getInventory().setResult(new ItemStack(Material.AIR));
         }
@@ -567,7 +561,7 @@ public class DaysCancelledEvents implements Listener {
 
     @EventHandler
     public void onSmithingCraft(PrepareSmithingEvent event) {
-        if (Utils.hasDaysPassed(14)) {
+        if (Utils.hasDaysPassed(10)) {
             if (event.getInventory().getInputEquipment() != null && event.getInventory().getInputMineral() != null) {
                 if (event.getInventory().getInputEquipment().getType() == Material.NETHERITE_BOOTS && event.getInventory().getInputMineral().isSimilar(ItemsList.PURE_INFUSED_NETHERITE_INGOT)) {
                     event.setResult(ItemsList.PURE_INFUSED_NETHERITE_BOOTS);
@@ -587,7 +581,7 @@ public class DaysCancelledEvents implements Listener {
 
     @EventHandler
     public void onAnvilCraft(PrepareAnvilEvent event) {
-        if (Utils.hasDaysPassed(14)) {
+        if (Utils.hasDaysPassed(10)) {
             if (event.getInventory().getFirstItem() != null && event.getInventory().getSecondItem() != null) {
                 if (event.getInventory().getFirstItem().isSimilar(ItemsList.ROUGH_INFUSED_NETHERITE_INGOT) && event.getInventory().getSecondItem().isSimilar(ItemsList.MAGMATIC_CORE)) {
                     event.setResult(ItemsList.PURE_INFUSED_NETHERITE_INGOT);
@@ -603,7 +597,7 @@ public class DaysCancelledEvents implements Listener {
     public void OnBedEnter(PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
 
-        if (player.getWorld().getEnvironment() == World.Environment.NORMAL && Utils.hasDaysPassed(7)) {
+        if (player.getWorld().getEnvironment() == World.Environment.NORMAL && Utils.hasDaysPassed(5)) {
             event.setCancelled(true);
             player.sendMessage(Component.text("Dormir est impossible.").color(TextColor.color(NamedTextColor.RED)));
         }
@@ -617,23 +611,23 @@ public class DaysCancelledEvents implements Listener {
             }
         }
 
-        if (event.getEntity() instanceof Ravager && event.getEntity().getKiller() != null && Utils.hasDaysPassed(7) && !Utils.hasDaysPassed(14)) {
+        if (event.getEntity() instanceof Ravager && event.getEntity().getKiller() != null && Utils.hasDaysPassed(5) && !Utils.hasDaysPassed(10)) {
             if (ThreadLocalRandom.current().nextInt(0, 100) <= 40) {
                 event.getDrops().add(ItemsList.RAVAGER_BONE);
             }
         }
 
-        if (event.getEntity() instanceof Witch && event.getEntity().getKiller() != null && event.getEntity().getWorld().getEnvironment() == World.Environment.THE_END && Utils.hasDaysPassed(21) && !Utils.hasDaysPassed(28)) {
+        if (event.getEntity() instanceof Witch && event.getEntity().getKiller() != null && event.getEntity().getWorld().getEnvironment() == World.Environment.THE_END && Utils.hasDaysPassed(15) && !Utils.hasDaysPassed(20)) {
             if (ThreadLocalRandom.current().nextInt(0, 100) <= 4) {
                 event.getDrops().add(ItemsList.MAGIC_CORE);
             }
         }
 
-        if (event.getEntity() instanceof Ghast && event.getEntity().getKiller() != null && Utils.hasDaysPassed(7)) {
+        if (event.getEntity() instanceof Ghast && event.getEntity().getKiller() != null && Utils.hasDaysPassed(5)) {
             event.getDrops().add(ItemsList.CRYING_GHAST_TEAR);
         }
 
-        if (event.getEntity() instanceof Warden && event.getEntity().getKiller() != null && Utils.hasDaysPassed(14)) {
+        if (event.getEntity() instanceof Warden && event.getEntity().getKiller() != null && Utils.hasDaysPassed(10)) {
             event.getDrops().add(ItemsList.WARDEN_HEART);
         }
 
@@ -654,16 +648,22 @@ public class DaysCancelledEvents implements Listener {
             if (event.getEntity().customName().equals(Component.text("Amethyst Golem").color(TextColor.color(NamedTextColor.LIGHT_PURPLE)))) {
                 event.getDrops().clear();
 
-                if (ThreadLocalRandom.current().nextInt(0, 100) <= 2 && !Utils.hasDaysPassed(7) && event.getEntity().getKiller() != null) {
+                if (ThreadLocalRandom.current().nextInt(0, 100) == 1 && !Utils.hasDaysPassed(5) && event.getEntity().getKiller() != null) {
                     event.getDrops().add(new ItemStack(Material.TOTEM_OF_UNDYING));
-                } else if (ThreadLocalRandom.current().nextInt(0, 100) <= 7 && Utils.hasDaysPassed(7) && event.getEntity().getKiller() != null) {
-                    event.getDrops().add(ItemsList.AMETHYST_CRYSTAL);
+                } else if (Utils.hasDaysPassed(5) && event.getEntity().getKiller() != null) {
+                    int randomAmethystGolemDrop = ThreadLocalRandom.current().nextInt(0, 100);
+
+                    if(randomAmethystGolemDrop > 96) {
+                        event.getDrops().add(new ItemStack(Material.TOTEM_OF_UNDYING));
+                    } else if(randomAmethystGolemDrop < 7) {
+                        event.getDrops().add(ItemsList.AMETHYST_CRYSTAL);
+                    }
                 }
             }
         }
 
         if (event.getEntity() instanceof Wither && event.getEntity().getKiller() != null) {
-            if (Utils.hasDaysPassed(21)) {
+            if (Utils.hasDaysPassed(15)) {
                 event.getDrops().add(ItemsList.POWER_TOTEM);
                 event.getDrops().add(ItemsList.POWER_TOTEM);
             }
@@ -674,7 +674,7 @@ public class DaysCancelledEvents implements Listener {
 
         }
 
-        if (event.getEntity() instanceof WitherSkeleton && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(21)) {
+        if (event.getEntity() instanceof WitherSkeleton && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(15)) {
             if (event.getEntity().customName().equals(Component.text("Emperor Wither Skeleton").color(TextColor.color(NamedTextColor.GOLD)))) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) <= 50) {
                     event.getDrops().add(ItemsList.EMPEROR_CRYSTAL);
@@ -682,7 +682,7 @@ public class DaysCancelledEvents implements Listener {
             }
         }
 
-        if (event.getEntity() instanceof MagmaCube && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(14)) {
+        if (event.getEntity() instanceof MagmaCube && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(10)) {
             if (event.getEntity().customName().equals(Component.text("Giga Magma Cube").color(TextColor.color(NamedTextColor.GOLD)))) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) <= 15) {
                     event.getDrops().add(ItemsList.MAGMATIC_CORE);
@@ -690,7 +690,7 @@ public class DaysCancelledEvents implements Listener {
             }
         }
 
-        if (event.getEntity() instanceof Vindicator && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(14) && !Utils.hasDaysPassed(28)) {
+        if (event.getEntity() instanceof Vindicator && event.getEntity().getKiller() != null && event.getEntity().customName() != null && Utils.hasDaysPassed(10) && !Utils.hasDaysPassed(20)) {
             if (event.getEntity().customName().equals(Component.text("Ender Vindicator").color(TextColor.color(NamedTextColor.LIGHT_PURPLE)))) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) <= 5) {
                     event.getDrops().add(ItemsList.ENDER_BOW);
@@ -698,17 +698,17 @@ public class DaysCancelledEvents implements Listener {
             }
         }
 
-        if (event.getEntity() instanceof Evoker && Utils.hasDaysPassed(7)) {
+        if (event.getEntity() instanceof Evoker && Utils.hasDaysPassed(5)) {
             event.getDrops().clear();
         }
 
         if (event.getEntity() instanceof Enderman || event.getEntity() instanceof Guardian || event.getEntity() instanceof PigZombie) {
-            if (Utils.hasDaysPassed(14)) {
+            if (Utils.hasDaysPassed(10)) {
                 event.getDrops().clear();
             }
         }
 
-        if (event.getEntity() instanceof PiglinBrute && event.getEntity().getKiller() != null && Utils.hasDaysPassed(14)) {
+        if (event.getEntity() instanceof PiglinBrute && event.getEntity().getKiller() != null && Utils.hasDaysPassed(10)) {
             if (ThreadLocalRandom.current().nextInt(0, 100) <= 50) {
                 event.getDrops().add(ItemsList.ROUGH_INFUSED_NETHERITE_INGOT);
             }
